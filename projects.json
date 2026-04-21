@@ -15,7 +15,7 @@
     "id": "local-library",
     "title": "local library",
     "image": "images/local library.png",
-    "url": "#"
+    "url": "https://library-ozh4.onrender.com"
   },
   {
     "id": "loop-studios",
@@ -30,9 +30,9 @@
     "url": "https://samjay.vercel.app"
   },
   {
-    "id": "sign-up-form",
-    "title": "sign up form",
-    "image": "images/sign up form.png",
-    "url": "#"
+    "id": "insure landing page",
+    "title": "insure landing page",
+    "image": "images/insure landing page.png",
+    "url": "https://chiefthechief.github.io/insure-landing-page/"
   }
 ]
