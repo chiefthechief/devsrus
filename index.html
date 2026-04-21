@@ -199,70 +199,19 @@
           <p class="section-subtitle">A few examples of the kinds of builds we deliver.</p>
         </header>
 
-        <div class="projects-grid">
-          <article class="project">
-            <div class="project-media" aria-hidden="true">
-              <div class="project-badge">SaaS</div>
-              <div class="project-art project-art-1"></div>
-            </div>
-            <div class="project-body">
-              <h3 class="card-title">AtlasOps Dashboard</h3>
-              <p class="card-text">Operational analytics and incident visibility with role-based access and fast data exploration.</p>
-              <ul class="tag-row" aria-label="Tech stack">
-                <li>UI system</li>
-                <li>Analytics</li>
-                <li>Accessibility</li>
-              </ul>
-            </div>
-          </article>
+        <div class="carousel-wrapper">
+          <div class="carousel-container">
+            <div class="carousel" id="projectCarousel"></div>
+          </div>
 
-          <article class="project">
-            <div class="project-media" aria-hidden="true">
-              <div class="project-badge">Mobile</div>
-              <div class="project-art project-art-2"></div>
-            </div>
-            <div class="project-body">
-              <h3 class="card-title">Pulse Booking</h3>
-              <p class="card-text">A smooth end-to-end booking experience with notifications, payments, and admin tooling.</p>
-              <ul class="tag-row" aria-label="Highlights">
-                <li>Conversion UX</li>
-                <li>Payments</li>
-                <li>Admin tools</li>
-              </ul>
-            </div>
-          </article>
+          <button class="carousel-button carousel-prev" type="button" aria-label="Previous project">
+            <span aria-hidden="true">←</span>
+          </button>
+          <button class="carousel-button carousel-next" type="button" aria-label="Next project">
+            <span aria-hidden="true">→</span>
+          </button>
 
-          <article class="project">
-            <div class="project-media" aria-hidden="true">
-              <div class="project-badge">Platform</div>
-              <div class="project-art project-art-3"></div>
-            </div>
-            <div class="project-body">
-              <h3 class="card-title">Northwind API</h3>
-              <p class="card-text">A secure backend foundation with observability, rate limiting, and clear API contracts.</p>
-              <ul class="tag-row" aria-label="Capabilities">
-                <li>API design</li>
-                <li>Security</li>
-                <li>Monitoring</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="project">
-            <div class="project-media" aria-hidden="true">
-              <div class="project-badge">Brand</div>
-              <div class="project-art project-art-4"></div>
-            </div>
-            <div class="project-body">
-              <h3 class="card-title">DevsRUs Marketing Site</h3>
-              <p class="card-text">A modern, minimal site with strong hierarchy, responsive layout, and subtle motion.</p>
-              <ul class="tag-row" aria-label="Highlights">
-                <li>SEO-ready</li>
-                <li>Responsive</li>
-                <li>Motion</li>
-              </ul>
-            </div>
-          </article>
+          <div class="carousel-dots" id="carouselDots"></div>
         </div>
       </div>
     </section>

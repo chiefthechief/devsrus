@@ -1,0 +1,38 @@
+[
+  {
+    "id": "best-lashes",
+    "title": "best lashes",
+    "image": "images/best lashes.png",
+    "url": "https://bestlashes.vercel.app"
+  },
+  {
+    "id": "inventory-taking",
+    "title": "inventory taking",
+    "image": "images/inventory taking.png",
+    "url": "https://inventory-for-it-department.vercel.app/"
+  },
+  {
+    "id": "local-library",
+    "title": "local library",
+    "image": "images/local library.png",
+    "url": "#"
+  },
+  {
+    "id": "loop-studios",
+    "title": "loop studios",
+    "image": "images/loop studios.png",
+    "url": "https://chiefthechief.github.io/loopstudios-landing-page/"
+  },
+  {
+    "id": "samjay",
+    "title": "samjay",
+    "image": "images/samjay.png",
+    "url": "https://samjay.vercel.app"
+  },
+  {
+    "id": "sign-up-form",
+    "title": "sign up form",
+    "image": "images/sign up form.png",
+    "url": "#"
+  }
+]
