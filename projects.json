@@ -1,37 +1,37 @@
 [
   {
     "id": "best-lashes",
-    "title": "best lashes",
+    "title": "Best Lashes",
     "image": "images/best lashes.png",
     "url": "https://bestlashes.vercel.app"
   },
   {
     "id": "inventory-taking",
-    "title": "inventory taking",
+    "title": "Inventory Taking",
     "image": "images/inventory taking.png",
     "url": "https://inventory-for-it-department.vercel.app/"
   },
   {
     "id": "local-library",
-    "title": "local library",
+    "title": "Local Library",
     "image": "images/local library.png",
     "url": "https://library-ozh4.onrender.com"
   },
   {
     "id": "loop-studios",
-    "title": "loop studios",
+    "title": "Loop Studios Landing Page",
     "image": "images/loop studios.png",
     "url": "https://chiefthechief.github.io/loopstudios-landing-page/"
   },
   {
     "id": "samjay",
-    "title": "samjay",
+    "title": "Samuel Adjei Portfolio Site",
     "image": "images/samjay.png",
     "url": "https://samjay.vercel.app"
   },
   {
     "id": "insure landing page",
-    "title": "insure landing page",
+    "title": "Insure Landing Page",
     "image": "images/insure landing page.png",
     "url": "https://chiefthechief.github.io/insure-landing-page/"
   }

@@ -977,6 +977,8 @@ ul{ margin: 0; padding: 0; list-style: none; }
   .footer-links{ justify-content: flex-start; }
   .carousel-prev{ left: 12px; }
   .carousel-next{ right: 12px; }
+  .carousel-item{ transform: scale(1.02); }
+  .carousel-overlay{ opacity: 1; }
 }
 
 @media (max-width: 720px){
@@ -1015,7 +1017,10 @@ ul{ margin: 0; padding: 0; list-style: none; }
 
   .hero-metrics{ grid-template-columns: 1fr; }
   .section-header{ flex-direction: column; align-items: flex-start; }
+  .about-grid{ grid-template-columns: 1fr; }
   .cards-grid{ grid-template-columns: 1fr; }
+  .carousel-item{ transform: scale(1.02); }
+  .carousel-overlay{ opacity: 1; }
   .carousel-title{ font-size: 16px; }
   .carousel-button{ width: 40px; height: 40px; font-size: 16px; }
 }
