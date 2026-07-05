@@ -1,357 +1,135 @@
-/* DevsRUs — site interactions (vanilla JS only) */
+const navToggle = document.querySelector("[data-nav-toggle]");
+const nav = document.querySelector("[data-nav]");
+const header = document.querySelector("[data-header]");
+const year = document.querySelector("[data-year]");
+const form = document.querySelector("[data-contact-form]");
+const formStatus = document.querySelector("[data-form-status]");
+const sectionLinks = Array.from(document.querySelectorAll(".site-nav a[href^='#']:not(.nav-cta)"));
+const sections = sectionLinks
+  .map((link) => document.querySelector(link.getAttribute("href")))
+  .filter(Boolean);
 
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-function setYear() {
-  const yearEl = $("#year");
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+if (year) {
+  year.textContent = new Date().getFullYear();
 }
 
-function initStickyHeaderElevation() {
-  const header = $(".site-header");
-  if (!header) return;
+document.querySelectorAll("img").forEach((image) => {
+  const markMissing = () => image.classList.add("image-missing");
 
-  const update = () => {
-    const elevates = window.scrollY > 6;
-    header.setAttribute("data-elevates", elevates ? "true" : "false");
-  };
+  image.addEventListener("error", markMissing, { once: true });
 
-  update();
-  window.addEventListener("scroll", update, { passive: true });
+  if (image.complete && image.naturalWidth === 0) {
+    markMissing();
+  }
+});
+
+function closeNav() {
+  nav?.classList.remove("is-open");
+  document.body.classList.remove("nav-open");
+  navToggle?.setAttribute("aria-expanded", "false");
 }
 
-function initMobileMenu() {
-  const toggle = $(".nav-toggle");
-  const menu = $("#navMenu");
-  if (!toggle || !menu) return;
+navToggle?.addEventListener("click", () => {
+  const isOpen = nav?.classList.toggle("is-open");
+  document.body.classList.toggle("nav-open", Boolean(isOpen));
+  navToggle.setAttribute("aria-expanded", String(Boolean(isOpen)));
+});
 
-  const setOpen = (open) => {
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-    menu.setAttribute("data-open", open ? "true" : "false");
-    document.documentElement.style.overflow = open ? "hidden" : "";
-  };
+nav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeNav);
+});
 
-  const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeNav();
+  }
+});
 
-  toggle.addEventListener("click", () => setOpen(!isOpen()));
-
-  // Close on link click
-  $$(".nav-link", menu).forEach((link) => {
-    link.addEventListener("click", () => setOpen(false));
-  });
-
-  // Close on Escape
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && isOpen()) setOpen(false);
-  });
-
-  // Close on resize to desktop
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 720 && isOpen()) setOpen(false);
-  });
-}
-
-function initSmoothScrolling() {
-  // Keep native smooth scrolling, but fix header offset & avoid broken hashes.
-  const header = $(".site-header");
-  const headerOffset = header ? header.getBoundingClientRect().height : 0;
-
-  $$('a[href^="#"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const href = a.getAttribute("href") || "";
-      if (href === "#" || href === "#top") return;
-
-      const target = $(href);
-      if (!target) return;
-
-      e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - headerOffset + 8;
-      window.scrollTo({ top, behavior: "smooth" });
-      history.pushState(null, "", href);
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      }
     });
+  },
+  { threshold: 0.16 }
+);
+
+document.querySelectorAll(".reveal").forEach((element) => {
+  revealObserver.observe(element);
+});
+
+window.setTimeout(() => {
+  document.querySelectorAll(".reveal:not(.is-visible)").forEach((element) => {
+    element.classList.add("is-visible");
   });
-}
+}, 900);
 
-function initRevealOnScroll() {
-  const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (prefersReduced) return;
+// Initialize tech carousel: duplicate track contents for continuous single-line scroll
+(function () {
+  const techStrip = document.querySelector('.tech-strip');
+  const carousel = techStrip?.querySelector('.tech-carousel');
+  const track = carousel?.querySelector('.tech-track');
+  if (!track) return;
 
-  const candidates = $$([
-    ".hero-content",
-    ".hero-card",
-    "#about .surface",
-    "#services .service-card",
-    "#projects .carousel-item",
-    "#testimonials .quote",
-    "#contact .surface",
-    ".contact-aside .surface",
-  ].join(","));
+  // collect original items, then append clones to the same track to create a seamless loop
+  const originalItems = Array.from(track.children);
+  originalItems.forEach((node) => track.appendChild(node.cloneNode(true)));
 
-  candidates.forEach((el) => el.setAttribute("data-reveal", "out"));
+  // Set duration based on number of original items (keeps speed sensible)
+  const itemCount = originalItems.length;
+  const duration = Math.max(12, itemCount * 1.8); // seconds
+  techStrip.style.setProperty('--scroll-duration', `${duration}s`);
 
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.setAttribute("data-reveal", "in");
-        io.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-  );
-
-  candidates.forEach((el) => io.observe(el));
-}
-
-function initContactForm() {
-  const form = $("#contactForm");
-  const status = $("#formStatus");
-  if (!form || !status) return;
-
-  const name = $("#name");
-  const email = $("#email");
-  const message = $("#message");
-
-  const setStatus = (text, tone) => {
-    status.textContent = text;
-    if (tone) status.setAttribute("data-tone", tone);
-    else status.removeAttribute("data-tone");
-  };
-
-  const setInvalid = (rowEl, invalid) => {
-    if (!rowEl) return;
-    rowEl.setAttribute("data-invalid", invalid ? "true" : "false");
-  };
-
-  const rowFor = (field) => (field ? field.closest(".form-row") : null);
-
-  const isValidEmail = (value) => {
-    const v = String(value || "").trim();
-    if (v.length < 3) return false;
-    // Practical email check; avoids over-strict RFC patterns.
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-  };
-
-  const validate = () => {
-    const n = String(name?.value || "").trim();
-    const e = String(email?.value || "").trim();
-    const m = String(message?.value || "").trim();
-
-    const nameOk = n.length >= 2;
-    const emailOk = isValidEmail(e);
-    const msgOk = m.length >= 12;
-
-    setInvalid(rowFor(name), !nameOk);
-    setInvalid(rowFor(email), !emailOk);
-    setInvalid(rowFor(message), !msgOk);
-
-    if (!nameOk) name?.setAttribute("aria-invalid", "true"); else name?.removeAttribute("aria-invalid");
-    if (!emailOk) email?.setAttribute("aria-invalid", "true"); else email?.removeAttribute("aria-invalid");
-    if (!msgOk) message?.setAttribute("aria-invalid", "true"); else message?.removeAttribute("aria-invalid");
-
-    return nameOk && emailOk && msgOk;
-  };
-
-  [name, email, message].forEach((field) => {
-    if (!field) return;
-    field.addEventListener("input", () => {
-      validate();
-      setStatus("", null);
-    });
-    field.addEventListener("blur", validate);
+  // Pause animation when user hovers (also respects reduced motion)
+  carousel.addEventListener('mouseenter', () => {
+    track.style.animationPlayState = 'paused';
   });
+  carousel.addEventListener('mouseleave', () => {
+    track.style.animationPlayState = '';
+  });
+})();
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    setStatus("", null);
+window.addEventListener("scroll", () => {
+  header?.classList.toggle("is-scrolled", window.scrollY > 20);
+});
 
-    const ok = validate();
-    if (!ok) {
-      setStatus("Please fix the highlighted fields and try again.", "error");
-      const firstInvalid = $(".form-row[data-invalid=\"true\"] .input, .form-row[data-invalid=\"true\"] .textarea", form);
-      firstInvalid?.focus();
+const activeObserver = new IntersectionObserver(
+  (entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+    if (!visible) {
       return;
     }
 
-    setStatus("Message ready to send. (Demo form — no backend wired.)", "success");
-    form.reset();
-    // Clear invalid states after reset
-    $$(".form-row", form).forEach((row) => row.removeAttribute("data-invalid"));
-  });
-}
-
-function initCarousel() {
-  async function loadAndInitCarousel() {
-    try {
-      // Fetch projects data
-      const response = await fetch("projects.json");
-      if (!response.ok) throw new Error("Failed to load projects.json");
-      const projects = await response.json();
-
-      if (!Array.isArray(projects) || projects.length === 0) {
-        console.warn("No projects found in projects.json");
-        return;
-      }
-
-      // Generate carousel items from projects data
-      const carousel = $("#projectCarousel");
-      if (!carousel) return;
-
-      projects.forEach((project) => {
-        const link = document.createElement("a");
-        link.className = "carousel-item";
-        link.href = project.url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-
-        const img = document.createElement("img");
-        img.src = project.image;
-        img.alt = `${project.title} project`;
-        img.loading = "lazy";
-        link.appendChild(img);
-
-        const overlay = document.createElement("div");
-        overlay.className = "carousel-overlay";
-        const title = document.createElement("h3");
-        title.className = "carousel-title";
-        title.textContent = project.title;
-        overlay.appendChild(title);
-        link.appendChild(overlay);
-
-        carousel.appendChild(link);
-      });
-
-      // Now initialize carousel functionality
-      initCarouselControls();
-    } catch (error) {
-      console.error("Error loading carousel projects:", error);
-    }
-  }
-
-  function initCarouselControls() {
-    const carousel = $("#projectCarousel");
-    if (!carousel) return;
-
-    let items = $$(".carousel-item", carousel);
-    const prevBtn = $(".carousel-prev");
-    const nextBtn = $(".carousel-next");
-    const dotsContainer = $("#carouselDots");
-    const container = carousel.parentElement.parentElement; // Get carousel-container
-
-    if (!items.length || !prevBtn || !nextBtn || !dotsContainer || !container) return;
-
-    const originalCount = items.length;
-    let currentIndex = originalCount; // Start at first "real" item after clones
-
-    // Clone items for infinite loop: [last, ...originals, first]
-    const lastItem = items[items.length - 1].cloneNode(true);
-    const firstItem = items[0].cloneNode(true);
-    carousel.insertBefore(lastItem, carousel.firstChild);
-    carousel.appendChild(firstItem);
-
-    // Refresh items list to include clones
-    items = $$(".carousel-item", carousel);
-
-    // Calculate sizing based on container width
-    const containerWidth = container.offsetWidth;
-    const gapSize = 14; // CSS gap in pixels
-    const totalItems = items.length;
-    const carouselWidth = containerWidth * totalItems + gapSize * (totalItems - 1);
-
-    // Set carousel width to properly fit all items
-    carousel.style.width = `${carouselWidth}px`;
-
-    // Set each item width to match container width for proper display
-    items.forEach((item) => {
-      item.style.width = `${containerWidth}px`;
+    sectionLinks.forEach((link) => {
+      link.classList.toggle("is-active", link.getAttribute("href") === `#${visible.target.id}`);
     });
-
-    // Create dots for original items only
-    for (let i = 0; i < originalCount; i++) {
-      const dot = document.createElement("button");
-      dot.className = "carousel-dot" + (i === 0 ? " active" : "");
-      dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
-      dot.setAttribute("type", "button");
-      dot.addEventListener("click", () => goToSlide(i));
-      dotsContainer.appendChild(dot);
-    }
-
-    const dots = $$(".carousel-dot", dotsContainer);
-
-    const updateCarousel = (instant = false) => {
-      // Calculate translation in pixels
-      const translatePixels = currentIndex * (containerWidth + gapSize);
-      carousel.style.transition = instant ? "none" : `transform var(--dur) var(--ease)`;
-      carousel.style.transform = `translateX(-${translatePixels}px)`;
-
-      // Update dots based on actual position in original items
-      const dotIndex = ((currentIndex - 1 + originalCount) % originalCount);
-      dots.forEach((dot, i) => {
-        dot.classList.toggle("active", i === dotIndex);
-      });
-    };
-
-    const goToSlide = (index) => {
-      // Convert dot click (0-based original) to carousel position
-      currentIndex = index + 1; // +1 because we have a clone at the beginning
-      updateCarousel();
-    };
-
-    const nextSlide = () => {
-      currentIndex++;
-      updateCarousel();
-
-      // If we've scrolled past all originals, jump to start without animation
-      if (currentIndex > originalCount) {
-        setTimeout(() => {
-          currentIndex = 1;
-          updateCarousel(true);
-        }, 180); // Wait for animation to finish
-      }
-    };
-
-    const prevSlide = () => {
-      currentIndex--;
-      updateCarousel();
-
-      // If we've scrolled before first original, jump to end without animation
-      if (currentIndex < 1) {
-        setTimeout(() => {
-          currentIndex = originalCount;
-          updateCarousel(true);
-        }, 180); // Wait for animation to finish
-      }
-    };
-
-    prevBtn.addEventListener("click", prevSlide);
-    nextBtn.addEventListener("click", nextSlide);
-
-    // Keyboard navigation
-    document.addEventListener("keydown", (e) => {
-      const carouselInView = carousel.getBoundingClientRect().top < window.innerHeight &&
-        carousel.getBoundingClientRect().bottom > 0;
-      if (!carouselInView) return;
-
-      if (e.key === "ArrowLeft") prevSlide();
-      if (e.key === "ArrowRight") nextSlide();
-    });
-
-    // Initialize carousel position
-    updateCarousel(true);
+  },
+  {
+    rootMargin: "-35% 0px -50% 0px",
+    threshold: [0.1, 0.25, 0.5],
   }
+);
 
-  loadAndInitCarousel();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  setYear();
-  initStickyHeaderElevation();
-  initMobileMenu();
-  initSmoothScrolling();
-  initRevealOnScroll();
-  initContactForm();
-  initCarousel();
+sections.forEach((section) => {
+  activeObserver.observe(section);
 });
 
+form?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  const data = new FormData(form);
+  const firstName = String(data.get("name") || "there").trim().split(" ")[0];
+  formStatus.textContent = `Thanks, ${firstName}. We will follow up within one business day.`;
+  form.reset();
+});

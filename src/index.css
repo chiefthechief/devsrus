@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #E9E9E9;
+  --color-brand-primary: #3A50B2;
+  --color-brand-dark: #111118;
+  --color-brand-text: #111118;
+  --color-brand-muted: #5a5a6a;
+  --color-brand-strip: #dcdcdc;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-reveal {
+    opacity: 0;
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .scroll-reveal-up {
+    transform: translateY(36px);
+  }
+
+  .scroll-reveal-down {
+    transform: translateY(-36px);
+  }
+
+  .scroll-reveal-left {
+    transform: translateX(-36px);
+  }
+
+  .scroll-reveal-right {
+    transform: translateX(36px);
+  }
+
+  .scroll-reveal-fade {
+    transform: none;
+  }
+
+  .scroll-reveal-scale {
+    transform: scale(0.94);
+  }
+
+  .scroll-reveal-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1;
+  }
+}
